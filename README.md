@@ -8,5 +8,8 @@ There is also proxy
 - Aced (Xaiden)
 - Yum
 
-># Credits
+# Credits
 Credits go to Aced and Yum for helping me with the requests, 
+
+# Future Project
+Depending on how I feel, I may release my project to bypass summrs with a high amount of bans
