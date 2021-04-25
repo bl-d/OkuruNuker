@@ -1,0 +1,17 @@
+{
+    "General": {
+        "Prefix": ">",
+        "Token": "Discord Token",
+        "Guild To Nuke": 835633870791376916
+    },
+    "Nuke":{
+        "Channel Names": ["retardation moment", "Cry about it"],
+        "Role Names": ["Okuru Moment", "cry about it"]
+    },
+    "Webhook Spam":{
+        "Spam": true,
+        "Webhook Names": ["okuru moment", "cry about it"],
+        "Message Contents": ["EZ @everyone", "@everyone looool"],
+        "Spam Amount": 30
+    }
+}
