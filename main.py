@@ -241,14 +241,12 @@ def menu():
 			[+]═════════════════════[+]═══════════════════[+]
 
 			\u001b[38;5;33m'''.center(os.get_terminal_size().columns))
-
-    try:
-        choice = int(input('[ > ] '))
-    except:
-        print('that\'s not a number retard')
+    choice = input('[ > ] ')
+    if not choice.isdigit():
+        print('Input must be a number')
         time.sleep(3)
         menu()
-
+        return
     if choice == 1:
         cls()
         os.system(f'title [Okuru Nuker] - Banning members')
@@ -389,7 +387,10 @@ async def on_command_error(ctx, error):
 try:
     cls()
     if token_type == "user":
-        client.run(token, bot=False)
+        client.run(
+		token, 
+		bot=False
+	)
     elif token_type == "bot":
         client.run(token)
 except:
