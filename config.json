@@ -2,16 +2,17 @@
     "General": {
         "Prefix": ">",
         "Token": "Discord Token",
-        "Guild To Nuke": 835633870791376916
+        "Guild To Nuke": 835633870791376916,
+        "Use Proxies": false
     },
     "Nuke":{
-        "Channel Names": ["retardation moment", "Cry about it"],
-        "Role Names": ["Okuru Moment", "cry about it"]
+        "Channel Names": ["okuru", "okuru xyz"],
+        "Role Names": ["okuru.xyz", "okuru"]
     },
     "Webhook Spam":{
         "Spam": true,
-        "Webhook Names": ["okuru moment", "cry about it"],
-        "Message Contents": ["EZ @everyone", "@everyone looool"],
+        "Webhook Names": ["okuru.xyz", "okuru"],
+        "Message Contents": ["> @everyone | https://okuru.xyz"],
         "Spam Amount": 30
     }
 }
