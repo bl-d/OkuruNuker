@@ -1,3 +1,4 @@
+from utils import ReadMe
 ```py
 """
 INFO: I take no responsibility if you use this nuker malicously.
@@ -7,12 +8,12 @@ P.S: If you want to suggest something, create an issue and i'll look into it
 
 P.S.: If you want to add something, just create a pull request
 """
-class okuruNuker:
-    def __init__(self):
+class OkuruNuker(ReadMe):
+    def __init__(self, ReadMe):
+        self.ReadMe = ReadMe
         self.name = 'Okuru Nuker'
         self.authors = [
-            'Gowixx',
-            'Aced'
+            'Gowixx'
         ]
         self.version = 1.3
         self.link = 'https://github.com/Gowixx/okuru-nuker'
@@ -22,7 +23,6 @@ class okuruNuker:
             'Linux Based Distros'
         ]
         self.authorContacts = {
-            'Gowixx': 'okuru.xyz',
-            'Aced': 'Aced#0001'
+            'Gowixx': 'okuru.xyz'
         }
 ```
