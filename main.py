@@ -8,6 +8,7 @@ from discord.ext import commands
 from colorama import Fore, init
 from itertools import cycle
 from utils import *
+
 init()
 
 version = '0.3'
@@ -36,7 +37,7 @@ with open('config.json') as f:
     WebhookNames = config['Webhook Spam']['Webhook Names']
     WebhookContents = config['Webhook Spam']["Message Contents"]
     WebhookSpamAmount = config['Webhook Spam']['Spam Amount']
-    f.close()
+
 util.setTitle('[Okuru Nuker] - Loaded Config')
 
 util.setTitle('[Okuru Nuker] - Loading Scraped')
@@ -48,10 +49,11 @@ util.setTitle('[Okuru Nuker] - Loaded Scraped')
 
 proxyPool = cycle(proxies)
 token_type = util.checkToken(token)
+
 def getProxyDict():
     if(not config['General']['Use Proxies']):
         return({})
-    return({'https': 'http://{}'.format(next(proxyPool))})
+    return({'https://': 'http://{}'.format(next(proxyPool))})
 
 if token_type == 'user':
     userBot = True
