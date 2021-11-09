@@ -1,4 +1,3 @@
-from utils import ReadMe
 ```py
 """
 INFO: I take no responsibility if you use this nuker malicously.
@@ -8,6 +7,8 @@ P.S: If you want to suggest something, create an issue and i'll look into it
 
 P.S.: If you want to add something, just create a pull request
 """
+from utils import ReadMe
+
 class OkuruNuker(ReadMe):
     def __init__(self, ReadMe):
         self.ReadMe = ReadMe
