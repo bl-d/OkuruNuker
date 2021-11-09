@@ -11,7 +11,7 @@ from utils import *
 
 init()
 
-version = '0.3'
+version = '1.3'
 api = 'v9'
 
 util.setTitle('[Okuru Nuker] - Checking Version')
