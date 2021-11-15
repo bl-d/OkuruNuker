@@ -10,13 +10,14 @@ P.S.: If you want to add something, just create a pull request
 from utils import ReadMe
 
 class OkuruNuker(ReadMe):
-    def __init__(self, ReadMe):
+    def __init__(self):
         self.ReadMe = ReadMe
         self.name = 'Okuru Nuker'
         self.authors = [
             'Gowixx'
         ]
         self.version = 1.3
+        self.platform = 'Github'
         self.link = 'https://github.com/Gowixx/okuru-nuker'
         self.language = 'Python'
         self.compatibleOS = [
