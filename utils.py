@@ -4,7 +4,7 @@ from colorama import Fore, init
 init()
 
 class util:
-    def setTitle(title: str) -> str:
+    def setTitle(title: str) -> bool:
         if os.name == 'nt':
             ctypes.windll.kernel32.SetConsoleTitleW(title)
             return(True)
@@ -16,7 +16,6 @@ class util:
         try:
             with open(fileName, 'r') as f:
                 content = f.read().splitlines()
-                f.close()
             return(content)
         except FileNotFoundError:
             return([])
