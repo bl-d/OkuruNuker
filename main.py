@@ -3,7 +3,7 @@ Disclaimer: I normally use "f" tags instead of .format(), but apparently .format
 Also I know some naming conventions are wrong for this, it just looks better w/ this project idk why.
 P.S: I'm using tuples for the threading as it's not mutable.
 '''
-import os, sys, threading, time, discord, httpx, colorama, random, json, httpx
+import os, sys, threading, time, discord, httpx, colorama, random, json, httpx, asyncio
 from discord.ext import commands
 from colorama import Fore, init
 from itertools import cycle
@@ -167,7 +167,7 @@ def CreateRole(RoleID: str) -> bool:
         CreateRole(RoleID)
 
 
-def nukecmd():
+async def nukecmd():
     util.cls()  
     print(f"\u001b[38;5;21m[?]\u001b[38;5;15m Ready To Nuke Server;\n")
     print("\u001b[38;5;21m[?]\u001b[38;5;15m Channel Names Loaded From Config")
@@ -194,11 +194,11 @@ def nukecmd():
 
     sys.stdout.write('Finished, Going back in 3 seconds\n')
     time.sleep(3)
-    menu()
+    await menu()
 
 util.setTitle('[Okuru Nuker] - Menu')
 
-def menu():
+async def menu():
     util.cls()
     print('''
 				\u001b[38;5;111m╔═╗╦╔═╦ ╦╦═╗╦ ╦  ╔╗╔╦ ╦╦╔═╔═╗╦═╗
@@ -217,7 +217,7 @@ def menu():
     try:
         choice = int(choice)
     except:
-        return(menu())
+        return(await menu())
         
     if choice == 1:
         util.cls(); util.setTitle('[Okuru Nuker] - Member Banning')
@@ -227,7 +227,7 @@ def menu():
             threading.Thread(target=NukeFunctions.BanUser, args=(member,)).start()
         while start < threading.active_count():
             pass
-        util.log('[!!!]', 'Finished, Press Enter to Continue.'); menu()
+        util.log('[!!!]', 'Finished, Press Enter to Continue.'); await menu()
 
 
     elif choice == 2:
@@ -238,7 +238,7 @@ def menu():
             threading.Thread(target=NukeFunctions.DeleteChannel, args=(channel, )).start()
         while start < threading.active_count():
             pass
-        util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); menu()
+        util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); await menu()
 
 
     elif choice == 3:
@@ -250,7 +250,7 @@ def menu():
         while start < threading.active_count():
             pass
         util.log('[!!!]', 'Finished, Press Enter to Continue.'); input()
-        menu()
+        await menu()
 
 
     elif choice == 4:
@@ -263,7 +263,7 @@ def menu():
             threading.Thread(target=NukeFunctions.CreateChannel, args=(random.choice(ChannelNames), )).start()
         while start < threading.active_count():
             pass
-        util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); menu()
+        util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); await menu()
 
 
     elif choice == 5:
@@ -278,20 +278,20 @@ def menu():
             threading.Thread(target=NukeFunctions.CreateRole, args=(RoleNames,)).start()
         while start < threading.active_count():
             pass
-        util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); menu()
-        menu()
+        util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); await menu()
+        await menu()
 
 
     elif choice == 6:
       util.cls()
       util.setTitle('[Okuru Nuker] - Nuke Command')
-      nukecmd()
+      await nukecmd()
 
     elif choice == 7:
         util.cls()
         util.log('[!]', 'Nuker Creators: Gowixx, Aced, and Yum')
         util.log('[!]', 'Press enter to go back.')
-        input(); menu()
+        input(); await menu()
 
     elif choice == 8:
         util.log('[!]', 'Type {}{}scrape {}in any channel of the server.'.format(
@@ -301,7 +301,7 @@ def menu():
     else:
         util.log('[!]', '{} is not a valid choice.'.format(choice))
         util.log('[!]', 'Press enter to go back.')
-        input();menu()
+        input();await menu()
 
 @client.command(name='Scrape', description='The Funny.', usage='')
 async def scrape(ctx):
@@ -316,34 +316,31 @@ async def scrape(ctx):
     with open('Scraped/members.okuru', 'w') as f:
         f.write('\n'.join([str(member.id) for member in ctx.guild.members]))
         util.log('[!]', 'Scraped {}{} {}Members.'.format(Fore.LIGHTBLUE_EX, len(ctx.guild.members), Fore.RESET))
-        f.close()
     
     with open('Scraped/channels.okuru', 'w') as f:
         f.write('\n'.join([str(channel.id) for channel in ctx.guild.channels]))
         util.log('[!]', 'Scraped {}{} {}Channels.'.format(Fore.LIGHTBLUE_EX, len(ctx.guild.channels), Fore.RESET))
-        f.close()
 
     with open('Scraped/roles.okuru', 'w') as f:
         f.write('\n'.join([str(role.id) for role in ctx.guild.roles]))
         util.log('[!]', 'Scraped {}{} {}Roles.'.format(Fore.LIGHTBLUE_EX, len(ctx.guild.roles), Fore.RESET))
-        f.close()
     
     util.log('[!]', 'Restart is required to apply changes.')
 
     util.log('[!]', 'Press enter to continue.')
     input()
-    menu()
+    await menu()
 
 
 @client.event
 async def on_ready():
     if token_type == 'bot':
-        menu()
+        await menu()
 
 @client.event
 async def on_connect():
     if token_type == 'user':
-        menu()
+        await menu()
 
 @client.event
 async def on_command_error(ctx, error):
