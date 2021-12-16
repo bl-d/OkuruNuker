@@ -139,7 +139,7 @@ class NukeFunctions:
                 pass
         return(True)
 
-    def CreateChannel(ChannelID: str):
+    def CreateChannel(ChannelID: str) -> bool:
         r = httpx.post(
             'https://discord.com/api/{}/guilds/{}/channels'.format(api, guild),
             proxies=getProxyDict(),
@@ -151,8 +151,9 @@ class NukeFunctions:
         elif r.status_code == 429:
             util.log('[!]', 'Ratelimited for {}{}'.format(Fore.LIGHTCYAN_EX, r.json()['retry_after']))
             return(NukeFunctions.CreateChannel(ChannelID))
+        return(True)
 
-def CreateRole(RoleID: str):
+def CreateRole(RoleID: str) -> bool:
     r = httpx.post(
         'https://discord.com/api/{}/guilds/{}/roles'.format(api, guild),
         proxies=getProxyDict(),
