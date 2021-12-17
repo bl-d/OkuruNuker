@@ -1,9 +1,8 @@
 '''
-Disclaimer: I normally use "f" tags instead of .format(), but apparently .format() is faster so im using it for this.
-Also I know some naming conventions are wrong for this, it just looks better w/ this project idk why.
-P.S: I'm using tuples for the threading as it's not mutable.
+INFO: Async version may have issues, but it's a good idea to use it anyway for now. If you find a bug, please report it.
+INFO: I know soem naming conventions are bad, but I'm not going to change them as they look better for some reason.
 '''
-import os, sys, threading, time, discord, httpx, colorama, random, json, httpx, asyncio
+import os, sys, threading, time, discord, httpx, colorama, random, json, httpx, asyncio, aiosonic
 from discord.ext import commands
 from colorama import Fore, init
 from itertools import cycle
