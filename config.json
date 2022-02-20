@@ -1,0 +1,18 @@
+{
+    "General": {
+        "Prefix": ">",
+        "Token": "Discord Token",
+        "Guild To Nuke": 123456789123456789,
+        "Use Proxies": false
+    },
+    "Nuke":{
+        "Channel Names": ["okuru", "okuru xyz"],
+        "Role Names": ["okuru.xyz", "okuru"]
+    },
+    "Webhook Spam":{
+        "Spam": true,
+        "Webhook Names": ["okuru.xyz", "okuru"],
+        "Message Contents": ["> @everyone | https://okuru.xyz"],
+        "Spam Amount": 30
+    }
+}
