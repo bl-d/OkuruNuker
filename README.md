@@ -18,7 +18,7 @@ class OkuruNuker(ReadMe):
         ]
         self.version = 1.3
         self.platform = 'Github'
-        self.link = 'https://github.com/Gowixx/okuru-nuker'
+        self.link = 'https://github.com/Gowixx/okurunuker'
         self.language = 'Python'
         self.compatibleOS = [
             'Windows',
